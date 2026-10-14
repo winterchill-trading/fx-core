@@ -25,6 +25,12 @@ versioning once released.
 - `Bundled`: an optional fourth CSV column, `fetched_at` (ISO 8601 with an offset), keeps
   a snapshot's real fetch time; rows without it still get midnight UTC of their rate date.
   `Bundled.to_csv ~fetched_at:true` writes the column.
+- `Bundled.parse_lenient`, `Bundled.parse ?on_unknown_currency` and
+  `Bundled.Unknown_currency`: a lenient parse that skips rows whose currency code is
+  unknown and reports their line and code; other checks still apply. The strict parse
+  is unchanged.
+- `examples/bundled-rates.csv`: a commented example of the bundled CSV shape, parsed by
+  the tests.
 - Display inverse digits: `Pricing.inverse_customer_rate ?digits` (default 10),
   `Pricing.price ?inverse_digits`, `Rate_table.Mid.inverse_rate ?digits` (default 20),
   `Quote.create ?inverse_digits` (both inverses) and `Card_fx.authorise ?inverse_digits`.
