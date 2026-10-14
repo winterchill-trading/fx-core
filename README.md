@@ -116,7 +116,19 @@ date,currency,rate,fetched_at
 
 The timestamp needs an explicit offset (`Z` or `+01:00`); an empty cell falls back to
 midnight. `Bundled.to_csv ~fetched_at:true` writes the column, so a table round-trips
-with its fetch times. Use `Freshness.Policy.offline` (or `Quote.Config.offline`): it drops the
+with its fetch times. [`examples/bundled-rates.csv`](examples/bundled-rates.csv) is a
+commented example with both row shapes; a test parses it, so it stays valid.
+
+A table shipped for more currencies than a build supports would fail the strict parse on
+the first unknown code. `Bundled.parse_lenient` (or `Bundled.parse ~on_unknown_currency`)
+skips such rows and reports each one's line and code; every other check still applies:
+
+```ocaml
+let observations, unknown = Bundled.parse_lenient ~pivot ~source text |> ok_exn in
+List.iter unknown ~f:(fun u -> log "skipped %s on line %d" u.currency u.line)
+```
+
+Use `Freshness.Policy.offline` (or `Quote.Config.offline`): it drops the
 maximum age, so quoting keeps working from the newest bundled date however old it is,
 and every basis is reported **stale**. With the default policy the same table would be
 refused after seven days, which is the right behaviour for a live service whose feed has
