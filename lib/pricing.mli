@@ -53,9 +53,10 @@ val customer_digits : int
 (** [mid x (1 - spread_bps / 10_000)] rounded down to [customer_digits]. *)
 val customer_rate : mid:Ratio.t -> spread_bps:int -> Ratio.t
 
-(** [1 / customer_rate] to [customer_digits], half-even: the rate as quoted the other way
-    round, for display. *)
-val inverse_customer_rate : Ratio.t -> Ratio.t
+(** [1 / customer_rate] to [digits] significant digits (default [customer_digits], 10),
+    half-even: the rate as quoted the other way round, for display. Raises unless
+    [digits >= 1]. *)
+val inverse_customer_rate : ?digits:int -> Ratio.t -> Ratio.t
 
 (** The default maximum on either side: 2^53 - 1 minor units, the largest integer a JSON
     number carries exactly. *)
@@ -95,9 +96,12 @@ type t =
   }
 [@@deriving sexp_of, compare, equal]
 
-(** Prices [request] from [mid] with the applied spread of [spread]. *)
+(** Prices [request] from [mid] with the applied spread of [spread]. [inverse_digits]
+    (default 10) sets the significant digits of [inverse_customer_rate]; it changes only
+    that display value, never the amounts. *)
 val price
-  :  ?max_minor_units:Z.t
+  :  ?inverse_digits:int
+  -> ?max_minor_units:Z.t
   -> mid:Rate_table.Mid.t
   -> spread:Spread.t
   -> Request.t

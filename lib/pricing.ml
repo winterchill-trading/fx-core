@@ -41,8 +41,8 @@ let customer_rate ~mid ~spread_bps =
   Ratio.round_sig Down ~digits:customer_digits (Q.mul mid factor)
 ;;
 
-let inverse_customer_rate rate =
-  Ratio.round_sig Half_even ~digits:customer_digits (Q.inv rate)
+let inverse_customer_rate ?(digits = customer_digits) rate =
+  Ratio.round_sig Half_even ~digits (Q.inv rate)
 ;;
 
 let default_max_minor_units = Z.(pred (shift_left one 53))
@@ -112,7 +112,13 @@ type t =
   }
 [@@deriving sexp_of, compare, equal]
 
-let price ?max_minor_units ~(mid : Rate_table.Mid.t) ~(spread : Spread.t) request =
+let price
+  ?inverse_digits
+  ?max_minor_units
+  ~(mid : Rate_table.Mid.t)
+  ~(spread : Spread.t)
+  request
+  =
   let rate = customer_rate ~mid:mid.rate ~spread_bps:spread.applied_bps in
   let%map.Result amounts =
     amounts
@@ -127,7 +133,7 @@ let price ?max_minor_units ~(mid : Rate_table.Mid.t) ~(spread : Spread.t) reques
   ; fixed_side = Request.fixed_side request
   ; mid
   ; customer_rate = rate
-  ; inverse_customer_rate = inverse_customer_rate rate
+  ; inverse_customer_rate = inverse_customer_rate ?digits:inverse_digits rate
   ; spread
   }
 ;;
