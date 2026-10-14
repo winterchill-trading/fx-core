@@ -174,6 +174,60 @@ date,currency,rate
       (("bundled rates" (line 4))
        ("observation: currency is the pivot" (currency USD)))
       (("bundled rates" (line 5)) ("rate: malformed price" -1))
-      (("bundled rates" (line 6)) "expected three fields: date,currency,rate")))
+      (("bundled rates" (line 6))
+       "expected three or four fields: date,currency,rate[,fetched_at]")))
+    |}]
+;;
+
+let%expect_test "bundled tables keep a real fetch time when the CSV has one" =
+  let csv =
+    {|date,currency,rate,fetched_at
+2026-10-08,EUR,0.9187,2026-10-08T16:05:00Z
+2026-10-08,JPY,149.82,
+2026-10-09,GBP,0.79,2026-10-09T17:00:00.25+01:00
+2026-10-09,EUR,0.92
+|}
+  in
+  let obs = Bundled.parse ~pivot:usd ~source:"bundled-test" csv |> Or_error.ok_exn in
+  List.iter obs ~f:(fun (o : Observation.t) ->
+    print_s
+      [%sexp
+        (Money.Currency.to_string o.currency : string)
+        , (o.fetched_at : Time_ns.Alternate_sexp.t)]);
+  let csv' = Bundled.to_csv ~fetched_at:true obs in
+  print_string csv';
+  let again = Bundled.parse ~pivot:usd ~source:"bundled-test" csv' |> Or_error.ok_exn in
+  print_s
+    [%sexp
+      (List.equal
+         Observation.equal
+         (List.sort again ~compare:Observation.compare)
+         (List.sort obs ~compare:Observation.compare)
+       : bool)];
+  let bad =
+    "date,currency,rate,fetched_at\n\
+     2026-10-08,EUR,0.9,2026-10-08 16:05:00\n\
+     2026-10-08,GBP,0.8,yesterday\n"
+  in
+  print_s
+    [%sexp
+      (Bundled.parse ~pivot:usd ~source:"b" bad |> Result.map ~f:List.length
+       : int Or_error.t)];
+  [%expect
+    {|
+    (EUR "2026-10-08 16:05:00Z")
+    (JPY "2026-10-08 00:00:00Z")
+    (GBP "2026-10-09 16:00:00.25Z")
+    (EUR "2026-10-09 00:00:00Z")
+    date,currency,rate,fetched_at
+    2026-10-08,EUR,0.9187,2026-10-08T16:05:00Z
+    2026-10-08,JPY,149.82,2026-10-08T00:00:00Z
+    2026-10-09,EUR,0.92,2026-10-09T00:00:00Z
+    2026-10-09,GBP,0.79,2026-10-09T16:00:00.25Z
+    true
+    (Error
+     ((("bundled rates" (line 2))
+       ("fetched_at needs a UTC offset" "2026-10-08 16:05:00"))
+      (("bundled rates" (line 3)) ("fetched_at needs a UTC offset" yesterday))))
     |}]
 ;;
