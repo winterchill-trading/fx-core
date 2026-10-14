@@ -111,7 +111,9 @@ module Mid = struct
     }
   [@@deriving sexp_of, compare, equal]
 
-  let inverse_rate t = Ratio.round_sig Half_even ~digits:mid_digits (Q.inv t.exact)
+  let inverse_rate ?(digits = mid_digits) t =
+    Ratio.round_sig Half_even ~digits (Q.inv t.exact)
+  ;;
 
   let to_money_rate t =
     Money.Rate.create

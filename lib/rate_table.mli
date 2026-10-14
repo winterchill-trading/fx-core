@@ -76,8 +76,9 @@ module Mid : sig
     }
   [@@deriving sexp_of, compare, equal]
 
-  (** [1 / exact] to 20 significant digits, half-even. *)
-  val inverse_rate : t -> Ratio.t
+  (** [1 / exact] to [digits] significant digits (default 20), half-even. Raises unless
+      [digits >= 1]. *)
+  val inverse_rate : ?digits:int -> t -> Ratio.t
 
   (** As a {!Money.Rate.t} with [sell] as base, at [rate], stamped with the basis fetch
       time and source. *)
