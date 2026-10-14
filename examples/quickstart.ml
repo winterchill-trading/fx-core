@@ -97,7 +97,9 @@ let () =
     |> Result.map_error ~f:Exchange.Error.to_error
     |> Or_error.ok_exn
   in
-  let balances = Payments_core.Booking.apply balances executed.entries |> Or_error.ok_exn in
+  let balances =
+    Payments_core.Booking.apply balances executed.entries |> Or_error.ok_exn
+  in
   printf
     "entries %d; EUR %s, GBP %s\n"
     (List.length executed.entries)

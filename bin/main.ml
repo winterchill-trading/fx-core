@@ -26,8 +26,8 @@ let bundled_flag =
     ~doc:"FILE use a bundled CSV table (offline mode) instead of the simulated source"
 ;;
 
-(* The table and the freshness policy: a bundled file means offline mode, where old
-   rates are still used and shown as stale. *)
+(* The table and the freshness policy: a bundled file means offline mode, where old rates
+   are still used and shown as stale. *)
 let load ~bundled ~now =
   match bundled with
   | Some path ->
@@ -81,7 +81,10 @@ let quote_command =
      and sell_amount = flag "-sell" (optional string) ~doc:"AMOUNT amount to sell"
      and buy_amount = flag "-buy" (optional string) ~doc:"AMOUNT amount to buy"
      and spread_bps =
-       flag "-spread" (optional_with_default 50 int) ~doc:"BPS standard spread (default 50)"
+       flag
+         "-spread"
+         (optional_with_default 50 int)
+         ~doc:"BPS standard spread (default 50)"
      and caps = flag "-cap" (listed int) ~doc:"BPS cap on the spread (repeatable)" in
      fun () ->
        let open Deferred.Or_error.Let_syntax in
@@ -99,7 +102,9 @@ let quote_command =
                 Pricing.Request.Buy a)
             | _ -> Or_error.error_string "give exactly one of -sell and -buy")
        in
-       let%bind spread = Deferred.return (Spread.create ~standard_bps:spread_bps ~caps ()) in
+       let%bind spread =
+         Deferred.return (Spread.create ~standard_bps:spread_bps ~caps ())
+       in
        let%map q =
          Quote.create
            ~config:{ Quote.Config.default with freshness }
@@ -122,7 +127,12 @@ let bundle_command =
     (let%map_open.Command from = flag "-from" (required date) ~doc:"DATE first date"
      and to_ = flag "-to" (required date) ~doc:"DATE last date" in
      fun () ->
-       let now = Time_ns.of_date_ofday ~zone:Time_float.Zone.utc (Date.add_days to_ 1) Time_ns.Ofday.start_of_day in
+       let now =
+         Time_ns.of_date_ofday
+           ~zone:Time_float.Zone.utc
+           (Date.add_days to_ 1)
+           Time_ns.Ofday.start_of_day
+       in
        let source =
          Simulated_source.create
            ~pivot:usd
