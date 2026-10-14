@@ -22,18 +22,43 @@
     row without it (three fields, or an empty fourth) gets midnight UTC at the start of
     its rate date: a bundled rate is never younger than its publication, so its basis is
     honest about age (and a deployment in offline mode shows it as stale). Either header
-    is accepted, and rows of both shapes may be mixed. *)
+    is accepted, and rows of both shapes may be mixed.
+
+    [examples/bundled-rates.csv] is a complete example of both shapes. *)
 
 open! Core
 
+(** A row skipped because its currency code is not one {!Money.Currency} knows. *)
+module Unknown_currency : sig
+  type t =
+    { line : int (** 1-based line number in the text *)
+    ; currency : string (** the code as written *)
+    }
+  [@@deriving sexp, compare, equal]
+end
+
 (** Parses CSV text. Fails with the line number on a malformed line, an unknown currency,
     the pivot as a currency, a rate that is not a positive decimal, or a [fetched_at] that
-    is not a timestamp with an offset. *)
+    is not a timestamp with an offset.
+
+    With [on_unknown_currency] the parse is lenient about currencies: a row whose currency
+    is unknown (a table shipped for more currencies than this build supports) is skipped
+    and passed to [on_unknown_currency] instead of failing the parse. Every other check
+    still applies to the skipped row, including its date and rate. *)
 val parse
-  :  pivot:Money.Currency.t
+  :  ?on_unknown_currency:(Unknown_currency.t -> unit)
+  -> pivot:Money.Currency.t
   -> source:string
   -> string
   -> Observation.t list Or_error.t
+
+(** {!parse} in lenient mode, returning the skipped rows, in line order, with the
+    observations. *)
+val parse_lenient
+  :  pivot:Money.Currency.t
+  -> source:string
+  -> string
+  -> (Observation.t list * Unknown_currency.t list) Or_error.t
 
 (** The CSV text of [observations] (header included), sorted by date then currency. With
     [~fetched_at:true] (default [false]) each row also carries its [fetched_at] in UTC,
