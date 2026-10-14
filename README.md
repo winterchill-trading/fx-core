@@ -77,7 +77,7 @@ its own errors.
 | Lookup | newest date on or before the request day; live preferred over bundled on the same date |
 | Cross mid A -> B | `per_pivot(B) / per_pivot(A)`, exact, published to 20 significant digits half-even |
 | Customer rate | `mid x (1 - spread)`, rounded **down** to 10 significant digits |
-| Inverse rates | `1 / rate`, half-even, same digits (display only) |
+| Inverse rates | `1 / rate`, half-even, same digits (display only); `?inverse_digits` (customer default 10) sets the significant digits shown |
 | Sell fixed | bought = floor(sold x customer rate) in the bought minor unit |
 | Buy fixed | sold = ceil(bought / customer rate) in the sold minor unit |
 | Fee | sold x spread, half-up in the sold minor unit, included in the sold amount |
@@ -105,7 +105,18 @@ date,currency,rate
 
 `Bundled.parse` marks every row `Bundled` with a fetch time of midnight UTC at the
 start of its rate date, so a bundled rate is never presented as younger than its
-publication. Use `Freshness.Policy.offline` (or `Quote.Config.offline`): it drops the
+publication. A snapshot that knows when it was taken can say so in an optional fourth
+column, and that time is kept:
+
+```
+date,currency,rate,fetched_at
+2026-10-09,EUR,0.92,2026-10-09T16:05:00Z
+2026-10-09,JPY,149.82,
+```
+
+The timestamp needs an explicit offset (`Z` or `+01:00`); an empty cell falls back to
+midnight. `Bundled.to_csv ~fetched_at:true` writes the column, so a table round-trips
+with its fetch times. Use `Freshness.Policy.offline` (or `Quote.Config.offline`): it drops the
 maximum age, so quoting keeps working from the newest bundled date however old it is,
 and every basis is reported **stale**. With the default policy the same table would be
 refused after seven days, which is the right behaviour for a live service whose feed has
