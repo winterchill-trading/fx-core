@@ -1,0 +1,18 @@
+(library
+ (name fx_core_test)
+ (package fx-core)
+ (libraries
+  core
+  async_kernel
+  async
+  expect_test_helpers_core
+  zarith
+  money
+  ledger
+  payments-core
+  fx-core)
+ (inline_tests
+  (flags
+   (:standard -source-tree-root .)))
+ (preprocess
+  (pps ppx_jane)))
