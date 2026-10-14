@@ -1,0 +1,22 @@
+# Reference rates bundled with an application, for Bundled.parse ~pivot:USD.
+#
+# Columns:
+#   date        the rate date, YYYY-MM-DD
+#   currency    an ISO 4217 code; never the pivot
+#   rate        units of the currency per one unit of the pivot, as an exact decimal
+#   fetched_at  optional: when the snapshot was obtained, ISO 8601 with an offset
+#               (Z or +hh:mm). Empty or missing: midnight UTC of the rate date.
+#
+# Blank lines and lines starting with # are ignored. The header may name three or four
+# columns, and rows of both shapes may be mixed.
+date,currency,rate,fetched_at
+2026-10-08,EUR,0.9187,2026-10-08T16:05:00Z
+2026-10-08,GBP,0.7652,2026-10-08T16:05:00Z
+2026-10-08,JPY,149.82,
+2026-10-09,EUR,0.9201,2026-10-09T17:00:00+01:00
+2026-10-09,GBP,0.7660
+2026-10-09,JPY,150.07
+
+# A code this build does not know: the strict parse fails on it, the lenient parse skips
+# it and reports its line.
+2026-10-09,NGN,1529.40
