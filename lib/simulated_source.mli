@@ -6,7 +6,7 @@
     runs and two machines agree on every rate. Rates are published Monday to Friday; on a
     weekend the newest rate is Friday's.
 
-    The clock comes from a {!Async_kernel.Time_source}, so tests drive it with a
+    The clock comes from a [Async_kernel.Time_source], so tests drive it with a
     synthetic one. A source can be made unreachable to exercise refresh failures. *)
 
 open! Async_kernel

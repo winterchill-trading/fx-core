@@ -3,9 +3,9 @@
 
     Format, one observation per line after a header:
     {v
-date,currency,rate
-2026-10-09,EUR,0.9187
-2026-10-09,JPY,149.82
+    date,currency,rate
+    2026-10-09,EUR,0.9187
+    2026-10-09,JPY,149.82
     v}
     The rate is units of [currency] per one unit of the pivot, written as an exact
     decimal. Blank lines and lines starting with [#] are ignored. Every observation gets
