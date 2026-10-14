@@ -12,6 +12,7 @@
   payments-core
   fx-core)
  (inline_tests
+  (deps ../examples/bundled-rates.csv)
   (flags
    (:standard -source-tree-root .)))
  (preprocess
