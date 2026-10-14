@@ -57,6 +57,10 @@ then `opam install --deps-only --with-test .` and `dune build && dune test`.
   `test/test_pricing.ml` has a Quickcheck property for it.
 - `Bundled` CSV: three columns, or four with `fetched_at`; keep both readable, and keep
   `to_csv` without the column by default so existing files stay byte-identical.
+- `examples/bundled-rates.csv` documents the CSV shape and is read by
+  `test/test_bundled_example.ml` (a `deps` entry in `test/dune`); change the format and
+  the example together. The lenient parse skips only unknown currency codes, never other
+  errors, and still validates the skipped row's date and rate.
 
 ## Dependencies and dependents
 
