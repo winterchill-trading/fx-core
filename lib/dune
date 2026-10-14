@@ -1,0 +1,6 @@
+(library
+ (name fx_core)
+ (public_name fx-core)
+ (libraries core async_kernel zarith money ledger payments-core)
+ (preprocess
+  (pps ppx_jane)))
