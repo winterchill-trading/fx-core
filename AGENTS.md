@@ -53,6 +53,10 @@ then `opam install --deps-only --with-test .` and `dune build && dune test`.
 - Formatting: `DUNE_BUILD_DIR=_build-fx-core opam exec --switch 5.2.0+ox -- dune build --root .. @fx-core/fmt --auto-promote`.
   Never run `dune fmt` at the workspace root.
 - User-visible changes get a line under "Unreleased" in `CHANGES.md`.
+- Display-only knobs (such as `?inverse_digits`) must never reach amounts or customer rates;
+  `test/test_pricing.ml` has a Quickcheck property for it.
+- `Bundled` CSV: three columns, or four with `fetched_at`; keep both readable, and keep
+  `to_csv` without the column by default so existing files stay byte-identical.
 
 ## Dependencies and dependents
 
