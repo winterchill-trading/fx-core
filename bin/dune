@@ -1,0 +1,7 @@
+(executable
+ (name main)
+ (public_name fx-core)
+ (package fx-core)
+ (libraries core core_unix.command_unix async money fx-core)
+ (preprocess
+  (pps ppx_jane)))
