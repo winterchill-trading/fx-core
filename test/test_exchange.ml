@@ -269,3 +269,33 @@ let%test_unit "every executed quote books balanced entries that leave the custom
         (Ledger.Balances.available after (chart.fee_income eur) eur)
         ~expect:q.fee)
 ;;
+
+let%expect_test "a quote's display inverses follow inverse_digits" =
+  let show ?inverse_digits () =
+    match
+      Quote.create
+        ?inverse_digits
+        (table ())
+        ~id:(Quote.Id.of_string "q-digits")
+        ~sell:eur
+        ~buy:gbp
+        ~spread:(Or_error.ok_exn (Spread.create ~standard_bps:50 ()))
+        (Sell (amount "100.00 EUR"))
+        ~now:(at ())
+    with
+    | Error _ -> print_endline "refused"
+    | Ok (q : Quote.t) ->
+      printf
+        "mid inverse %s customer inverse %s buy %s\n"
+        (Ratio.to_string q.inverse_mid_rate)
+        (Ratio.to_string q.inverse_customer_rate)
+        (Money.Amount.to_string q.buy)
+  in
+  show ();
+  show ~inverse_digits:6 ();
+  [%expect
+    {|
+    mid inverse 1.1645569620253164557 customer inverse 1.170409007 buy 85.44 GBP
+    mid inverse 1.16456 customer inverse 1.17041 buy 85.44 GBP
+    |}]
+;;
