@@ -163,3 +163,58 @@ let%test_unit "a lower spread never gives the customer less" =
        | Buy -> assert (Money.Amount.( <= ) low.amounts.sell high.amounts.sell))
     | _ -> ())
 ;;
+
+let%expect_test "display inverse digits are configurable" =
+  let mid = mid eur gbp in
+  List.iter [ 4; 6; 10; 14 ] ~f:(fun digits ->
+    let p =
+      Pricing.price
+        ~inverse_digits:digits
+        ~mid
+        ~spread:(spread 50)
+        (Sell (amount "100.00 EUR"))
+      |> Result.ok
+      |> Option.value_exn
+    in
+    printf
+      "%2d: customer %s inverse %s mid inverse %s buy %s\n"
+      digits
+      (Ratio.to_string p.customer_rate)
+      (Ratio.to_string p.inverse_customer_rate)
+      (Ratio.to_string (Rate_table.Mid.inverse_rate ~digits mid))
+      (Money.Amount.to_string p.amounts.buy));
+  print_s
+    [%sexp
+      (Ratio.equal
+         (Pricing.inverse_customer_rate (Q.of_string "4/3"))
+         (Pricing.inverse_customer_rate
+            ~digits:Pricing.customer_digits
+            (Q.of_string "4/3"))
+       : bool)];
+  [%expect
+    {|
+     4: customer 0.8544021739 inverse 1.17 mid inverse 1.165 buy 85.44 GBP
+     6: customer 0.8544021739 inverse 1.17041 mid inverse 1.16456 buy 85.44 GBP
+    10: customer 0.8544021739 inverse 1.170409007 mid inverse 1.164556962 buy 85.44 GBP
+    14: customer 0.8544021739 inverse 1.1704090070785 mid inverse 1.1645569620253 buy 85.44 GBP
+    true
+    |}]
+;;
+
+let%test_unit "inverse digits never change amounts or the customer rate" =
+  Quickcheck.test
+    (Quickcheck.Generator.both (Int.gen_incl 1 30) (Int.gen_incl 1 1_000_000))
+    ~f:(fun (digits, cents) ->
+      let request : Pricing.Request.t =
+        Sell (Money.Amount.of_minor_units_int eur cents)
+      in
+      (* Tiny amounts are refused (nothing on the other side); both calls must agree. *)
+      let price ?inverse_digits () =
+        Pricing.price ?inverse_digits ~mid:(mid eur gbp) ~spread:(spread 50) request
+        |> Result.ok
+        |> Option.map ~f:(fun (p : Pricing.t) -> p.amounts, p.customer_rate)
+      in
+      [%test_result: (Pricing.Amounts.t * Ratio.t) option]
+        (price ~inverse_digits:digits ())
+        ~expect:(price ()))
+;;
