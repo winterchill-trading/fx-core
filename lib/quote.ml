@@ -43,14 +43,29 @@ module Config = struct
   let offline = { default with freshness = Freshness.Policy.offline }
 end
 
-let create ?(config = Config.default) ?selection table ~id ~sell ~buy ~spread request ~now
+let create
+  ?inverse_digits
+  ?(config = Config.default)
+  ?selection
+  table
+  ~id
+  ~sell
+  ~buy
+  ~spread
+  request
+  ~now
   =
   let open Result.Let_syntax in
   let as_of = Time_ns.to_date now ~zone:Time_float.Zone.utc in
   let%bind mid = Rate_table.mid ?selection table ~sell ~buy ~as_of in
   let%bind () = Freshness.check config.freshness mid.basis ~now in
   let%map priced =
-    Pricing.price ~max_minor_units:config.max_minor_units ~mid ~spread request
+    Pricing.price
+      ?inverse_digits
+      ~max_minor_units:config.max_minor_units
+      ~mid
+      ~spread
+      request
   in
   { id
   ; sell = priced.amounts.sell
@@ -58,7 +73,7 @@ let create ?(config = Config.default) ?selection table ~id ~sell ~buy ~spread re
   ; fee = priced.amounts.fee
   ; fixed_side = priced.fixed_side
   ; mid_rate = mid.rate
-  ; inverse_mid_rate = Rate_table.Mid.inverse_rate mid
+  ; inverse_mid_rate = Rate_table.Mid.inverse_rate ?digits:inverse_digits mid
   ; customer_rate = priced.customer_rate
   ; inverse_customer_rate = priced.inverse_customer_rate
   ; spread

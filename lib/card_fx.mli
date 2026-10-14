@@ -27,9 +27,11 @@ type t =
 
 (** Prices an authorisation of [merchant_amount] on an account in [account_currency] from
     the rates of the UTC day of [now]. Refuses a merchant amount in the account currency
-    ([Same_currency]: no conversion needed), a missing or too-old rate. *)
+    ([Same_currency]: no conversion needed), a missing or too-old rate. [inverse_digits]
+    (default 10) sets the significant digits of the displayed [inverse_customer_rate]. *)
 val authorise
-  :  ?freshness:Freshness.Policy.t
+  :  ?inverse_digits:int
+  -> ?freshness:Freshness.Policy.t
   -> Rate_table.t
   -> account_currency:Money.Currency.t
   -> merchant_amount:Money.Amount.t

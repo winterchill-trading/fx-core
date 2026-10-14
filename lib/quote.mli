@@ -47,9 +47,14 @@ end
 
 (** Prices [request] (selling [sell], buying [buy]) at [now] against the rates of the UTC
     day of [now]. [selection] defaults to live-preferred; pass [Bundled_only] to price a
-    past day deterministically. *)
+    past day deterministically.
+
+    [inverse_digits], when given, sets the significant digits of both display inverses
+    ([inverse_mid_rate] and [inverse_customer_rate]); without it they keep 20 and 10.
+    Amounts and the rates themselves never depend on it. *)
 val create
-  :  ?config:Config.t
+  :  ?inverse_digits:int
+  -> ?config:Config.t
   -> ?selection:Rate_table.Selection.t
   -> Rate_table.t
   -> id:Id.t

@@ -14,6 +14,7 @@ type t =
 [@@deriving sexp_of, compare, equal]
 
 let authorise
+  ?inverse_digits
   ?(freshness = Freshness.Policy.default)
   table
   ~account_currency
@@ -31,7 +32,7 @@ let authorise
       ~as_of
   in
   let%bind () = Freshness.check freshness mid.basis ~now in
-  let%map priced = Pricing.price ~mid ~spread (Buy merchant_amount) in
+  let%map priced = Pricing.price ?inverse_digits ~mid ~spread (Buy merchant_amount) in
   { merchant_amount
   ; account_amount = priced.amounts.sell
   ; fee = priced.amounts.fee
