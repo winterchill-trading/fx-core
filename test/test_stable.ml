@@ -15,7 +15,8 @@ let%expect_test "stable bin_prot digests" =
     ; "Quote", [%bin_digest: Quote.Stable.V1.t]
     ]
     ~f:(fun (name, digest) -> printf "%-20s %s\n" name digest);
-  [%expect {|
+  [%expect
+    {|
     Ratio                d9a8da25d5656b016fb4dbdc2e4197fb
     Origin               de3d5e6eb6592241e1590ff480f78136
     Observation          236405fd2d3813444c08e2d74e1aa5b1
@@ -46,10 +47,14 @@ let%expect_test "values round trip through bin_prot and sexp" =
   [%test_result: Quote.t] (Quote.t_of_sexp (Quote.sexp_of_t q)) ~expect:q;
   let o = obs ~origin:Bundled gbp "0.7912" in
   [%test_result: Observation.t] (round_trip (module Observation.Stable.V1) o) ~expect:o;
-  [%test_result: Observation.t] (Observation.t_of_sexp (Observation.sexp_of_t o)) ~expect:o;
+  [%test_result: Observation.t]
+    (Observation.t_of_sexp (Observation.sexp_of_t o))
+    ~expect:o;
   let bad = Sexp.of_string "((standard_bps 10) (applied_bps 20))" in
-  print_s [%sexp (Or_error.try_with (fun () -> Spread.t_of_sexp bad) : Spread.t Or_error.t)];
-  [%expect {|
+  print_s
+    [%sexp (Or_error.try_with (fun () -> Spread.t_of_sexp bad) : Spread.t Or_error.t)];
+  [%expect
+    {|
     (Error
      (Of_sexp_error
        "(\"applied spread must be between zero and the standard\" (applied_bps 20)\

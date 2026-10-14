@@ -18,7 +18,10 @@ let%expect_test "estimate in a base currency, rounded once" =
   show gbp [ "0.01 EUR"; "0.01 EUR"; "0.01 EUR" ];
   show eur [ "10.00 EUR"; "5.00 SEK" ];
   show eur [];
-  show ~now:(Time_ns.add (at ()) (Time_ns.Span.of_day 10.)) eur [ "10.00 EUR"; "1.00 GBP" ];
+  show
+    ~now:(Time_ns.add (at ()) (Time_ns.Span.of_day 10.))
+    eur
+    [ "10.00 EUR"; "1.00 GBP" ];
   [%expect
     {|
     ((total ("132.60 EUR")) (missing ()) (rate_date (2026-10-09)))

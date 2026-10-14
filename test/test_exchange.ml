@@ -22,7 +22,10 @@ let ledger ~eur_balance =
     ]
     @ Booking.Chart.accounts chart ~rails:[] ~currencies:[ eur; gbp ]
   in
-  let b = List.fold accounts ~init:Ledger.Balances.empty ~f:(fun b a -> apply b (Account_opened a)) in
+  let b =
+    List.fold accounts ~init:Ledger.Balances.empty ~f:(fun b a ->
+      apply b (Account_opened a))
+  in
   let deposit =
     Ledger.Entry.create
       ~idempotency_key:(Ledger.Idempotency_key.of_string "deposit-1")
@@ -128,7 +131,9 @@ let%expect_test "executing books the sell leg, the fee and the buy leg" =
     [%message
       ""
         ~claim:(r.claim : Quote_book.Claim.t)
-        ~status:(Quote_book.status r.book q.id ~now:(at ~sec:10 ()) : Quote_book.Status.t option)
+        ~status:
+          (Quote_book.status r.book q.id ~now:(at ~sec:10 ())
+           : Quote_book.Status.t option)
         ~eur:(Ledger.Balances.available b customer_eur eur : Money.Amount.t)
         ~gbp:(Ledger.Balances.available b customer_gbp gbp : Money.Amount.t)];
   Ledger.Trial_balance.(check (of_balances b)) |> Or_error.ok_exn;
@@ -136,9 +141,13 @@ let%expect_test "executing books the sell leg, the fee and the buy leg" =
   let again = execute ~key:"x-1" ~sec:60 r.book |> Result.ok |> Option.value_exn in
   print_s
     [%message
-      "retry" ~claim:(again.claim : Quote_book.Claim.t) ~entries:(List.length again.entries : int)];
+      "retry"
+        ~claim:(again.claim : Quote_book.Claim.t)
+        ~entries:(List.length again.entries : int)];
   let show r =
-    print_s [%sexp (Result.map r ~f:(fun (_ : Exchange.t) -> ()) : (unit, Exchange.Error.t) Result.t)]
+    print_s
+      [%sexp
+        (Result.map r ~f:(fun (_ : Exchange.t) -> ()) : (unit, Exchange.Error.t) Result.t)]
   in
   show (execute ~key:"x-2" r.book);
   [%expect
@@ -183,12 +192,13 @@ let%expect_test "execution refusals leave the book unchanged" =
   print_s
     [%sexp (Quote_book.status book q.id ~now:(at ~sec:5 ()) : Quote_book.Status.t option)];
   print_s
-    [%sexp (Quote_book.status book q.id ~now:(at ~sec:30 ()) : Quote_book.Status.t option)];
+    [%sexp
+      (Quote_book.status book q.id ~now:(at ~sec:30 ()) : Quote_book.Status.t option)];
+  print_s
+    [%sexp (Quote_book.add book q |> Result.map ~f:Quote_book.length : int Or_error.t)];
   print_s
     [%sexp
-      (Quote_book.add book q |> Result.map ~f:Quote_book.length : int Or_error.t)];
-  print_s
-    [%sexp (Quote_book.prune_expired book ~before:(at ~sec:31 ()) |> Quote_book.length : int)];
+      (Quote_book.prune_expired book ~before:(at ~sec:31 ()) |> Quote_book.length : int)];
   [%expect
     {|
     (Error

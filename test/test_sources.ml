@@ -22,7 +22,9 @@ let%expect_test "simulated rates depend only on currency and date" =
   let _, a = simulated () in
   let _, b = simulated ~now:(Time_ns.add (at ()) (Time_ns.Span.of_day 30.)) () in
   List.iter [ eur; gbp; jpy; chf ] ~f:(fun c ->
-    let r s d = Option.value_map (Simulated_source.rate s c d) ~default:"-" ~f:Ratio.to_string in
+    let r s d =
+      Option.value_map (Simulated_source.rate s c d) ~default:"-" ~f:Ratio.to_string
+    in
     printf
       "%s fri %s sat %s same-on-other-source %b\n"
       (Money.Currency.to_string c)
@@ -47,7 +49,9 @@ let%test_unit "simulated rates stay within the volatility band of the seed" =
        (Quickcheck.Generator.of_list (Simulated_source.usd_seeds ()))
        (Int.gen_incl 0 3650))
     ~f:(fun ((currency, seed), days) ->
-      let r = Option.value_exn (Simulated_source.rate s currency (Date.add_days friday days)) in
+      let r =
+        Option.value_exn (Simulated_source.rate s currency (Date.add_days friday days))
+      in
       let band = Q.mul seed (Q.of_ints 51 10_000) in
       assert (Q.leq (Q.abs (Q.sub r seed)) band))
 ;;
@@ -112,7 +116,8 @@ let%expect_test "history skips weekends and stops at today" =
         ~to_:(Date.add_days friday 7))
     |> ok_exn
   in
-  List.iter obs ~f:(fun o -> printf "%s %s\n" (Date.to_string o.date) (Ratio.to_string o.per_pivot));
+  List.iter obs ~f:(fun o ->
+    printf "%s %s\n" (Date.to_string o.date) (Ratio.to_string o.per_pivot));
   [%expect
     {|
     2026-10-02 0.92368
@@ -137,11 +142,24 @@ date,currency,rate
   let obs = Bundled.parse ~pivot:usd ~source:"bundled-test" csv |> Or_error.ok_exn in
   print_s [%sexp (List.hd_exn obs : Observation.t)];
   print_string (Bundled.to_csv obs);
-  let again = Bundled.parse ~pivot:usd ~source:"bundled-test" (Bundled.to_csv obs) |> Or_error.ok_exn in
+  let again =
+    Bundled.parse ~pivot:usd ~source:"bundled-test" (Bundled.to_csv obs)
+    |> Or_error.ok_exn
+  in
   (* The input is already in date, currency order, so the round trip is exact. *)
   print_s [%sexp (List.equal Observation.equal again obs : bool)];
-  let bad = "date,currency,rate\n2026-10-08,EUR,0.9\n2026-10-08,XXX,1\n2026-10-08,USD,1\n2026-10-08,GBP,-1\nnonsense\n" in
-  print_s [%sexp (Bundled.parse ~pivot:usd ~source:"b" bad |> Result.map ~f:List.length : int Or_error.t)];
+  let bad =
+    "date,currency,rate\n\
+     2026-10-08,EUR,0.9\n\
+     2026-10-08,XXX,1\n\
+     2026-10-08,USD,1\n\
+     2026-10-08,GBP,-1\n\
+     nonsense\n"
+  in
+  print_s
+    [%sexp
+      (Bundled.parse ~pivot:usd ~source:"b" bad |> Result.map ~f:List.length
+       : int Or_error.t)];
   [%expect
     {|
     ((pivot USD) (currency EUR) (date 2026-10-08) (per_pivot 0.9187)

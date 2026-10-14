@@ -40,8 +40,8 @@ let positive_q =
     ~f:(fun n d -> Q.of_ints n d)
 ;;
 
-let%test_unit "down never rounds up, up never down, and both stay within one unit in \
-               the last digit"
+let%test_unit "down never rounds up, up never down, and both stay within one unit in the \
+               last digit"
   =
   Quickcheck.test
     (Quickcheck.Generator.tuple2 positive_q (Int.gen_incl 1 20))

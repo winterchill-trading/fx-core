@@ -44,9 +44,15 @@ let%expect_test "authorise, then re-price the final amount at the same rate" =
 let%expect_test "refunds return the refunded share of what was paid, rounded down" =
   let paid = amount "58.53 EUR" in
   let settled = amount "50.00 GBP" in
-  List.iter [ "50.00 GBP"; "25.00 GBP"; "0.01 GBP"; "50.01 GBP"; "0.00 GBP"; "1.00 EUR" ]
+  List.iter
+    [ "50.00 GBP"; "25.00 GBP"; "0.01 GBP"; "50.01 GBP"; "0.00 GBP"; "1.00 EUR" ]
     ~f:(fun refund ->
-      match Card_fx.refund_share ~paid ~settled_merchant:settled ~refund_merchant:(amount refund) with
+      match
+        Card_fx.refund_share
+          ~paid
+          ~settled_merchant:settled
+          ~refund_merchant:(amount refund)
+      with
       | Ok r -> printf "%s -> %s\n" refund (Money.Amount.to_string r)
       | Error _ as e -> print_refusal e);
   [%expect

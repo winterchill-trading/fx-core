@@ -79,10 +79,17 @@ let%expect_test "spread schedule by tier" =
     |> Or_error.ok_exn
   in
   List.iter
-    [ None, None; Some "plus", None; Some "premium", None; Some "unknown", None; Some "plus", Some 25; None, Some 60 ]
+    [ None, None
+    ; Some "plus", None
+    ; Some "premium", None
+    ; Some "unknown", None
+    ; Some "plus", Some 25
+    ; None, Some 60
+    ]
     ~f:(fun (tier, cap_bps) ->
       let s = Spread.Schedule.spread schedule ?tier ?cap_bps () |> Or_error.ok_exn in
-      print_s [%message "" (tier : string option) (cap_bps : int option) ~_:(s : Spread.t)]);
+      print_s
+        [%message "" (tier : string option) (cap_bps : int option) ~_:(s : Spread.t)]);
   print_s [%sexp (Spread.create ~standard_bps:1001 () : Spread.t Or_error.t)];
   print_s [%sexp (Spread.create ~standard_bps:50 ~caps:[ -1 ] () : Spread.t Or_error.t)];
   [%expect
@@ -98,8 +105,8 @@ let%expect_test "spread schedule by tier" =
     |}]
 ;;
 
-(* Properties over every pair of the test table, amounts up to ten million major units
-   and spreads up to the maximum. *)
+(* Properties over every pair of the test table, amounts up to ten million major units and
+   spreads up to the maximum. *)
 let gen =
   let currencies = Rate_table.currencies (table ()) in
   let open Quickcheck.Generator.Let_syntax in

@@ -86,7 +86,9 @@ let%expect_test "lookup takes the newest date on or before the day, live before 
   show monday;
   show (Date.add_days friday (-1));
   show (Date.add_days friday (-2));
-  printf "length %d, latest %s\n" (Rate_table.length t)
+  printf
+    "length %d, latest %s\n"
+    (Rate_table.length t)
     (Option.value_map (Rate_table.latest_date t) ~default:"none" ~f:Date.to_string);
   [%expect
     {|
@@ -141,7 +143,10 @@ let%expect_test "history and cross history" =
     printf "%s %s\n" (Date.to_string o.date) (Ratio.to_string o.per_pivot));
   List.iter (Rate_table.cross_history t ~sell:eur ~buy:gbp ~from ~to_:friday) ~f:(fun m ->
     printf "%s %s\n" (Date.to_string m.basis.rate_date) (Ratio.to_string m.rate));
-  print_s [%sexp (List.length (Rate_table.cross_history t ~sell:usd ~buy:eur ~from ~to_:friday) : int)];
+  print_s
+    [%sexp
+      (List.length (Rate_table.cross_history t ~sell:usd ~buy:eur ~from ~to_:friday)
+       : int)];
   [%expect
     {|
     2026-10-06 0.93
@@ -167,7 +172,10 @@ let%expect_test "an observation with another pivot is rejected" =
       ~fetched_at:(at ())
     |> Or_error.ok_exn
   in
-  print_s [%sexp (Rate_table.add (Rate_table.create ~pivot:usd) o |> Result.map ~f:ignore : unit Or_error.t)];
+  print_s
+    [%sexp
+      (Rate_table.add (Rate_table.create ~pivot:usd) o |> Result.map ~f:ignore
+       : unit Or_error.t)];
   [%expect {| (Error ("observation has another pivot" (table USD) (observation EUR))) |}]
 ;;
 

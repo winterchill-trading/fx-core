@@ -43,8 +43,10 @@ let%expect_test "offline mode never refuses on age" =
   print_s
     [%message
       ""
-        ~default:(Freshness.check Freshness.Policy.default old ~now : (unit, Refusal.t) Result.t)
-        ~offline:(Freshness.check Freshness.Policy.offline old ~now : (unit, Refusal.t) Result.t)
+        ~default:
+          (Freshness.check Freshness.Policy.default old ~now : (unit, Refusal.t) Result.t)
+        ~offline:
+          (Freshness.check Freshness.Policy.offline old ~now : (unit, Refusal.t) Result.t)
         ~offline_stale:((Freshness.assess Freshness.Policy.offline old ~now).stale : bool)];
   [%expect
     {|
