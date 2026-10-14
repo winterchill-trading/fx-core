@@ -6,8 +6,8 @@
     runs and two machines agree on every rate. Rates are published Monday to Friday; on a
     weekend the newest rate is Friday's.
 
-    The clock comes from a [Async_kernel.Time_source], so tests drive it with a
-    synthetic one. A source can be made unreachable to exercise refresh failures. *)
+    The clock comes from a [Async_kernel.Time_source], so tests drive it with a synthetic
+    one. A source can be made unreachable to exercise refresh failures. *)
 
 open! Async_kernel
 open! Core
@@ -32,8 +32,8 @@ val usd_seeds : unit -> (Money.Currency.t * Ratio.t) list
 (** While [false], [latest] and [history] fail as an unreachable server would. *)
 val set_reachable : t -> bool -> unit
 
-(** The rate the source publishes for [currency] on [date] (the business day on or
-    before it), if the currency is seeded. Pure. *)
+(** The rate the source publishes for [currency] on [date] (the business day on or before
+    it), if the currency is seeded. Pure. *)
 val rate : t -> Money.Currency.t -> Date.t -> Ratio.t option
 
 (** The business day on or before [date]. *)

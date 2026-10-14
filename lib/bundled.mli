@@ -15,8 +15,8 @@
 
 open! Core
 
-(** Parses CSV text. Fails with the line number on a malformed line, an unknown
-    currency, the pivot as a currency, or a rate that is not a positive decimal. *)
+(** Parses CSV text. Fails with the line number on a malformed line, an unknown currency,
+    the pivot as a currency, or a rate that is not a positive decimal. *)
 val parse
   :  pivot:Money.Currency.t
   -> source:string

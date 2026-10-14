@@ -24,7 +24,11 @@ let authorise
   let open Result.Let_syntax in
   let as_of = Time_ns.to_date now ~zone:Time_float.Zone.utc in
   let%bind mid =
-    Rate_table.mid table ~sell:account_currency ~buy:(Amount.currency merchant_amount) ~as_of
+    Rate_table.mid
+      table
+      ~sell:account_currency
+      ~buy:(Amount.currency merchant_amount)
+      ~as_of
   in
   let%bind () = Freshness.check freshness mid.basis ~now in
   let%map priced = Pricing.price ~mid ~spread (Buy merchant_amount) in

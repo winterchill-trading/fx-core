@@ -3,8 +3,8 @@
     An exchange books, through {!Payments_core.Swap.execute}:
     - the sell leg: [sell - fee] from the paying account to the institution's FX position
       in the sold currency;
-    - the fee: [fee] from the paying account to fee income in the sold currency (left
-      out when zero);
+    - the fee: [fee] from the paying account to fee income in the sold currency (left out
+      when zero);
     - the buy leg: [buy] from the FX position in the bought currency to the receiving
       account.
 
@@ -15,8 +15,8 @@
 
 open! Core
 
-(** Why an execution failed: a refusal the customer can be told about, or a ledger
-    failure (unknown or closed account, a rule of the chart) that is the operator's. *)
+(** Why an execution failed: a refusal the customer can be told about, or a ledger failure
+    (unknown or closed account, a rule of the chart) that is the operator's. *)
 module Error : sig
   type t =
     | Refused of Refusal.t
@@ -49,8 +49,8 @@ type t =
   }
 
 (** Claims the quote in [book] under [execution_key] and books it, all or nothing: when
-    booking fails the returned error leaves the caller's book untouched. A replay with
-    the same key books nothing again. *)
+    booking fails the returned error leaves the caller's book untouched. A replay with the
+    same key books nothing again. *)
 val execute
   :  Quote_book.t
   -> Payments_core.Booking.Chart.t

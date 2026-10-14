@@ -25,9 +25,9 @@ type t =
   }
 [@@deriving sexp_of, compare, equal]
 
-(** Prices an authorisation of [merchant_amount] on an account in [account_currency]
-    from the rates of the UTC day of [now]. Refuses a merchant amount in the account
-    currency ([Same_currency]: no conversion needed), a missing or too-old rate. *)
+(** Prices an authorisation of [merchant_amount] on an account in [account_currency] from
+    the rates of the UTC day of [now]. Refuses a merchant amount in the account currency
+    ([Same_currency]: no conversion needed), a missing or too-old rate. *)
 val authorise
   :  ?freshness:Freshness.Policy.t
   -> Rate_table.t
@@ -37,14 +37,13 @@ val authorise
   -> now:Time_ns.t
   -> (t, Refusal.t) Result.t
 
-(** The account side of a final merchant amount at the authorisation's customer rate
-    and spread. *)
+(** The account side of a final merchant amount at the authorisation's customer rate and
+    spread. *)
 val reprice : t -> final_merchant_amount:Money.Amount.t -> (t, Refusal.t) Result.t
 
 (** [refund_share ~paid ~settled_merchant ~refund_merchant] is
     [floor(paid * refund_merchant / settled_merchant)] in [paid]'s currency. Refuses a
-    refund above the settled merchant amount, a non-positive amount or mixed
-    currencies. *)
+    refund above the settled merchant amount, a non-positive amount or mixed currencies. *)
 val refund_share
   :  paid:Money.Amount.t
   -> settled_merchant:Money.Amount.t

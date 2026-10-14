@@ -25,4 +25,7 @@ let attribution (T ((module M), s)) = M.attribution s
 let url (T ((module M), s)) = M.url s
 let pivot (T ((module M), s)) = M.pivot s
 let latest (T ((module M), s)) = M.latest s
-let history (T ((module M), s)) ~currencies ~from ~to_ = M.history s ~currencies ~from ~to_
+
+let history (T ((module M), s)) ~currencies ~from ~to_ =
+  M.history s ~currencies ~from ~to_
+;;

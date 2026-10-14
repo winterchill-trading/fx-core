@@ -76,11 +76,14 @@ let amounts
     then Ok ()
     else Error (Refusal.Currency_mismatch { expected; got = Amount.currency given })
   in
-  let%bind () = if Amount.is_positive given then Ok () else Error (Refusal.Amount_not_positive given) in
+  let%bind () =
+    if Amount.is_positive given then Ok () else Error (Refusal.Amount_not_positive given)
+  in
   let sell, buy =
     match request with
     | Sell sell ->
-      sell, Amount.of_q ~rounding:Down buy_currency (Q.mul (Amount.to_q sell) customer_rate)
+      ( sell
+      , Amount.of_q ~rounding:Down buy_currency (Q.mul (Amount.to_q sell) customer_rate) )
     | Buy buy ->
       Amount.of_q ~rounding:Up sell_currency (Q.div (Amount.to_q buy) customer_rate), buy
   in

@@ -1,14 +1,13 @@
 (** Foreign exchange for banks.
 
-    {ul
-     {- Rates: {!Observation}, {!Origin}, {!Rate_table} (as-of lookup, cross rates
-        through a pivot), {!Basis}, {!Freshness} (stale, too old, offline mode).}
-     {- Pricing: {!Spread} (caps and tiers), {!Pricing} (customer rate, directional
-        rounding, included fee), {!Card_fx}, {!Valuation}.}
-     {- Quotes and execution: {!Quote}, {!Quote_book} (open, executed, expired),
-        {!Exchange} (ledger entries through payments-core).}
-     {- Sources: {!Rate_source}, {!Simulated_source}, {!Bundled}, {!Refresh}.}
-     {- Shared: {!Ratio} (exact rationals), {!Refusal} (why something was refused).}} *)
+    - Rates: {!Observation}, {!Origin}, {!Rate_table} (as-of lookup, cross rates through a
+      pivot), {!Basis}, {!Freshness} (stale, too old, offline mode).
+    - Pricing: {!Spread} (caps and tiers), {!Pricing} (customer rate, directional
+      rounding, included fee), {!Card_fx}, {!Valuation}.
+    - Quotes and execution: {!Quote}, {!Quote_book} (open, executed, expired), {!Exchange}
+      (ledger entries through payments-core).
+    - Sources: {!Rate_source}, {!Simulated_source}, {!Bundled}, {!Refresh}.
+    - Shared: {!Ratio} (exact rationals), {!Refusal} (why something was refused). *)
 
 module Ratio = Ratio
 module Origin = Origin

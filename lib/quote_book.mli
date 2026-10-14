@@ -1,6 +1,6 @@
-(** The life of quotes: [Open], then [Executed] once, or [Expired] when its time runs
-    out first. A pure state machine over an immutable value; a service keeps the current
-    book in its own store (or rebuilds it from its records) and applies the same rules.
+(** The life of quotes: [Open], then [Executed] once, or [Expired] when its time runs out
+    first. A pure state machine over an immutable value; a service keeps the current book
+    in its own store (or rebuilds it from its records) and applies the same rules.
 
     Claiming a quote for execution is idempotent per execution key: the same key claims
     the same quote again (a retried request), any other key is refused. *)
@@ -51,8 +51,8 @@ val claim
   -> now:Time_ns.t
   -> (t * Quote.t * Claim.t, Refusal.t) Result.t
 
-(** Drops quotes that were never executed and expired before [before]; executed quotes
-    are kept so a late retry still replays. *)
+(** Drops quotes that were never executed and expired before [before]; executed quotes are
+    kept so a late retry still replays. *)
 val prune_expired : t -> before:Time_ns.t -> t
 
 (** Number of quotes in the book. *)

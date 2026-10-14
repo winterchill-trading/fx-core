@@ -43,7 +43,8 @@ module Config = struct
   let offline = { default with freshness = Freshness.Policy.offline }
 end
 
-let create ?(config = Config.default) ?selection table ~id ~sell ~buy ~spread request ~now =
+let create ?(config = Config.default) ?selection table ~id ~sell ~buy ~spread request ~now
+  =
   let open Result.Let_syntax in
   let as_of = Time_ns.to_date now ~zone:Time_float.Zone.utc in
   let%bind mid = Rate_table.mid ?selection table ~sell ~buy ~as_of in

@@ -20,7 +20,9 @@ let book_entries chart balances (quote : Quote.t) ~from_ ~to_ ~execution_key ~no
               { id = Quote.Id.to_string quote.id; expires_at = quote.expires_at }))
     else Ok ()
   in
-  let available = Ledger.Balances.available balances from_ (Money.Amount.currency quote.sell) in
+  let available =
+    Ledger.Balances.available balances from_ (Money.Amount.currency quote.sell)
+  in
   let%bind () =
     if Money.Amount.( >= ) available quote.sell
     then Ok ()

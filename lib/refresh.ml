@@ -65,7 +65,8 @@ end
 let next_attempt_at (policy : Policy.t) (status : Status.t) ~now =
   match status.last_attempt_at with
   | None -> now
-  | Some at -> Time_ns.add at (if status.reachable then policy.interval else policy.retry_after)
+  | Some at ->
+    Time_ns.add at (if status.reachable then policy.interval else policy.retry_after)
 ;;
 
 let fetch source table ~now =

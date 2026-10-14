@@ -1,5 +1,5 @@
-(** A table of reference rates per currency, date and origin, all quoted against one
-    pivot currency, and the cross rates derived from it.
+(** A table of reference rates per currency, date and origin, all quoted against one pivot
+    currency, and the cross rates derived from it.
 
     Rates are stored as units of each currency per one unit of the pivot (USD in most
     feeds). The mid rate between two other currencies goes through the pivot:
@@ -43,8 +43,8 @@ module Selection : sig
   [@@deriving sexp, compare, equal, enumerate]
 end
 
-(** The observation for [currency] on the newest date on or before [as_of]. [None] for
-    the pivot itself and for currencies without such an observation. *)
+(** The observation for [currency] on the newest date on or before [as_of]. [None] for the
+    pivot itself and for currencies without such an observation. *)
 val lookup
   :  ?selection:Selection.t
   -> t

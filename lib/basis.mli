@@ -1,6 +1,6 @@
-(** What a price was based on: the source, the origin and the dates of the reference
-    rates behind it. A cross rate combines two observations; its basis is the weaker of
-    the two (the older rate date, the older fetch, bundled if either leg was bundled), so
+(** What a price was based on: the source, the origin and the dates of the reference rates
+    behind it. A cross rate combines two observations; its basis is the weaker of the two
+    (the older rate date, the older fetch, bundled if either leg was bundled), so
     staleness is never understated. *)
 
 open! Core
@@ -15,8 +15,7 @@ type t =
 
 val of_observation : Observation.t -> t
 
-(** The weaker of two bases, as described above. The source is the one of the older
-    fetch. *)
+(** The weaker of two bases, as described above. The source is the one of the older fetch. *)
 val combine : t -> t -> t
 
 (** [now - fetched_at], never negative. *)

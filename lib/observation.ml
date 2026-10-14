@@ -33,11 +33,13 @@ module Stable = struct
       if Money.Currency.equal t.pivot t.currency
       then
         Or_error.error_s
-          [%message "observation: currency is the pivot" ~currency:(t.currency : Money.Currency.t)]
+          [%message
+            "observation: currency is the pivot" ~currency:(t.currency : Money.Currency.t)]
       else if Q.sign t.per_pivot <= 0
       then
         Or_error.error_s
-          [%message "observation: rate must be positive" ~per_pivot:(t.per_pivot : Ratio.t)]
+          [%message
+            "observation: rate must be positive" ~per_pivot:(t.per_pivot : Ratio.t)]
       else Ok t
     ;;
 

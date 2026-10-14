@@ -13,8 +13,8 @@ type t = Q.t [@@deriving compare, equal, sexp]
 (** ["1.0845"], ["2000/2169"]. *)
 val to_string : t -> string
 
-(** Reads [to_string] output: digits, a decimal or a fraction; no sign, exponent or
-    float syntax. *)
+(** Reads [to_string] output: digits, a decimal or a fraction; no sign, exponent or float
+    syntax. *)
 val of_string_or_error : string -> t Or_error.t
 
 (** [round_sig mode ~digits q] rounds [q] to [digits] significant decimal digits with

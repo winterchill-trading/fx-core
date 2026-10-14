@@ -126,7 +126,8 @@ let history t ~currencies ~from ~to_ =
      else
        Ok
          (Date.dates_between ~min:from ~max:(Date.min to_ (today t))
-          |> List.filter ~f:(fun d -> not (Day_of_week.is_sun_or_sat (Date.day_of_week d)))
+          |> List.filter ~f:(fun d ->
+            not (Day_of_week.is_sun_or_sat (Date.day_of_week d)))
           |> List.concat_map ~f:(fun d ->
             List.filter_map currencies ~f:(fun c -> observation t c d))))
 ;;

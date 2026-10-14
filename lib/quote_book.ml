@@ -32,7 +32,8 @@ let empty = Quote.Id.Map.empty
 let add t (q : Quote.t) =
   match Map.add t ~key:q.id ~data:{ Entry.quote = q; executed = None } with
   | `Ok t -> Ok t
-  | `Duplicate -> Or_error.error_s [%message "quote already in the book" ~id:(q.id : Quote.Id.t)]
+  | `Duplicate ->
+    Or_error.error_s [%message "quote already in the book" ~id:(q.id : Quote.Id.t)]
 ;;
 
 let find t id = Map.find t id |> Option.map ~f:(fun (e : Entry.t) -> e.quote)
@@ -61,7 +62,8 @@ let claim t id ~execution_key ~now =
      | Executed { execution_key = k; _ } when String.equal k execution_key ->
        Ok (t, e.quote, Claim.Replayed)
      | Executed _ -> Error (Refusal.Quote_already_used id_s)
-     | Expired -> Error (Refusal.Quote_expired { id = id_s; expires_at = e.quote.expires_at })
+     | Expired ->
+       Error (Refusal.Quote_expired { id = id_s; expires_at = e.quote.expires_at })
      | Open ->
        Ok
          ( Map.set t ~key:id ~data:{ e with executed = Some (execution_key, now) }

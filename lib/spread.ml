@@ -23,7 +23,9 @@ module Stable = struct
 
     let validate (t : t) =
       if t.standard_bps < 0 || t.standard_bps > max_bps
-      then Or_error.error_s [%message "spread out of range" ~standard_bps:(t.standard_bps : int)]
+      then
+        Or_error.error_s
+          [%message "spread out of range" ~standard_bps:(t.standard_bps : int)]
       else if t.applied_bps < 0 || t.applied_bps > t.standard_bps
       then
         Or_error.error_s
@@ -91,6 +93,9 @@ module Schedule = struct
 
   let spread t ?tier ?cap_bps () =
     let tier_cap = Option.bind tier ~f:(Map.find t.tier_caps) in
-    create_spread ~standard_bps:t.standard_bps ~caps:(List.filter_opt [ tier_cap; cap_bps ]) ()
+    create_spread
+      ~standard_bps:t.standard_bps
+      ~caps:(List.filter_opt [ tier_cap; cap_bps ])
+      ()
   ;;
 end

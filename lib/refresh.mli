@@ -1,5 +1,5 @@
-(** Keeping a rate table current: when to fetch next, what the last attempts say about
-    the source, and one fetch-and-merge step.
+(** Keeping a rate table current: when to fetch next, what the last attempts say about the
+    source, and one fetch-and-merge step.
 
     The schedule is pure: after a success the next fetch is one [interval] later, after a
     failure one [retry_after] later. A service runs the loop with its own timer and
@@ -55,8 +55,8 @@ module Status : sig
   val stale : t -> Freshness.Policy.t -> now:Time_ns.t -> bool
 end
 
-(** When to try next: now if never tried, else [interval] after a success or
-    [retry_after] after a failure. *)
+(** When to try next: now if never tried, else [interval] after a success or [retry_after]
+    after a failure. *)
 val next_attempt_at : Policy.t -> Status.t -> now:Time_ns.t -> Time_ns.t
 
 (** Fetches the source's latest rates and merges them into [table]. On failure the table

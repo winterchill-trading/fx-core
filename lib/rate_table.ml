@@ -17,7 +17,9 @@ module Slot = struct
     | Bundled -> { t with bundled = Some o }
   ;;
 
-  let count t = Bool.to_int (Option.is_some t.live) + Bool.to_int (Option.is_some t.bundled)
+  let count t =
+    Bool.to_int (Option.is_some t.live) + Bool.to_int (Option.is_some t.bundled)
+  ;;
 end
 
 module Selection = struct
@@ -146,7 +148,12 @@ let combine ~sell ~buy a b =
       assert false
   in
   let exact = Q.div (per b) (per a) in
-  { Mid.sell; buy; exact; rate = Ratio.round_sig Half_even ~digits:mid_digits exact; basis }
+  { Mid.sell
+  ; buy
+  ; exact
+  ; rate = Ratio.round_sig Half_even ~digits:mid_digits exact
+  ; basis
+  }
 ;;
 
 let mid ?(selection = Selection.Prefer_live) t ~sell ~buy ~as_of =
@@ -176,10 +183,8 @@ let cross_history ?(selection = Selection.Prefer_live) t ~sell ~buy ~from ~to_ =
     in
     match by_date sell, by_date buy with
     | `Pivot, `Pivot -> []
-    | `Pivot, `Dates m ->
-      Map.data m |> List.map ~f:(fun b -> combine ~sell ~buy `Pivot b)
-    | `Dates m, `Pivot ->
-      Map.data m |> List.map ~f:(fun a -> combine ~sell ~buy a `Pivot)
+    | `Pivot, `Dates m -> Map.data m |> List.map ~f:(fun b -> combine ~sell ~buy `Pivot b)
+    | `Dates m, `Pivot -> Map.data m |> List.map ~f:(fun a -> combine ~sell ~buy a `Pivot)
     | `Dates ma, `Dates mb ->
       Map.fold2 ma mb ~init:[] ~f:(fun ~key:_ ~data acc ->
         match data with

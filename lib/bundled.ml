@@ -16,7 +16,8 @@ let parse_line ~pivot ~source line =
       ~per_pivot
       ~origin:Bundled
       ~source
-      ~fetched_at:(Time_ns.of_date_ofday ~zone:Time_float.Zone.utc date Time_ns.Ofday.start_of_day)
+      ~fetched_at:
+        (Time_ns.of_date_ofday ~zone:Time_float.Zone.utc date Time_ns.Ofday.start_of_day)
   | _ -> Or_error.error_s [%message "expected three fields: date,currency,rate"]
 ;;
 
@@ -26,10 +27,11 @@ let parse ~pivot ~source text =
   |> List.filter ~f:(fun (_, line) ->
     not (String.is_empty line || String.is_prefix line ~prefix:"#"))
   |> (function
-   | (_, first) :: rest when String.equal first header -> rest
-   | lines -> lines)
+        | (_, first) :: rest when String.equal first header -> rest
+        | lines -> lines)
   |> List.map ~f:(fun (n, line) ->
-    parse_line ~pivot ~source line |> Or_error.tag_s ~tag:[%message "bundled rates" ~line:(n : int)])
+    parse_line ~pivot ~source line
+    |> Or_error.tag_s ~tag:[%message "bundled rates" ~line:(n : int)])
   |> Or_error.combine_errors
 ;;
 

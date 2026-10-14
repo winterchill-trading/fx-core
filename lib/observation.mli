@@ -1,5 +1,5 @@
-(** One reference rate: how many units of [currency] one unit of the [pivot] currency
-    buys on [date], from [source] and [origin].
+(** One reference rate: how many units of [currency] one unit of the [pivot] currency buys
+    on [date], from [source] and [origin].
 
     Reference rates are mid-market values (no spread), usually blended from central-bank
     publications and published once per business day, so [date] is the day the rate

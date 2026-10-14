@@ -53,12 +53,12 @@ val customer_digits : int
 (** [mid x (1 - spread_bps / 10_000)] rounded down to [customer_digits]. *)
 val customer_rate : mid:Ratio.t -> spread_bps:int -> Ratio.t
 
-(** [1 / customer_rate] to [customer_digits], half-even: the rate as quoted the other
-    way round, for display. *)
+(** [1 / customer_rate] to [customer_digits], half-even: the rate as quoted the other way
+    round, for display. *)
 val inverse_customer_rate : Ratio.t -> Ratio.t
 
-(** The default maximum on either side: 2^53 - 1 minor units, the largest integer a
-    JSON number carries exactly. *)
+(** The default maximum on either side: 2^53 - 1 minor units, the largest integer a JSON
+    number carries exactly. *)
 val default_max_minor_units : Z.t
 
 (** The three amounts of a conversion. *)
@@ -73,8 +73,8 @@ end
 
 (** The amounts for [request] at an already rounded [customer_rate] (units of [buy] per
     one [sell]). Used directly to re-price at a rate fixed earlier (card settlement).
-    Refuses an amount in neither currency, a non-positive amount, a result of zero, and
-    an amount above [max_minor_units] on either side. *)
+    Refuses an amount in neither currency, a non-positive amount, a result of zero, and an
+    amount above [max_minor_units] on either side. *)
 val amounts
   :  ?max_minor_units:Z.t
   -> sell:Money.Currency.t

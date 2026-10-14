@@ -17,7 +17,11 @@ let t_of_sexp sexp =
   | Sexp.List _ -> of_sexp_error "ratio: expected an atom" sexp
 ;;
 
-let pow10 n = if n >= 0 then Q.of_bigint (Z.pow (Z.of_int 10) n) else Q.inv (Q.of_bigint (Z.pow (Z.of_int 10) (-n)))
+let pow10 n =
+  if n >= 0
+  then Q.of_bigint (Z.pow (Z.of_int 10) n)
+  else Q.inv (Q.of_bigint (Z.pow (Z.of_int 10) (-n)))
+;;
 
 (* The decimal exponent [e] with [10^e <= q < 10^(e+1)], for a positive [q]. The digit
    counts of numerator and denominator give it to within one. *)
@@ -28,10 +32,12 @@ let exponent q =
 ;;
 
 let round_sig mode ~digits q =
-  if digits < 1 then raise_s [%message "Ratio.round_sig: digits must be positive" (digits : int)];
+  if digits < 1
+  then raise_s [%message "Ratio.round_sig: digits must be positive" (digits : int)];
   match Q.sign q with
   | 0 -> Q.zero
-  | s when s < 0 -> raise_s [%message "Ratio.round_sig: negative value" ~q:(Q.to_string q)]
+  | s when s < 0 ->
+    raise_s [%message "Ratio.round_sig: negative value" ~q:(Q.to_string q)]
   | _ ->
     let scale = pow10 (digits - 1 - exponent q) in
     Q.div (Q.of_bigint (Money.Rounding.round mode (Q.mul q scale))) scale
@@ -46,8 +52,7 @@ module Stable = struct
     let sexp_of_t = sexp_of_t
     let t_of_sexp = t_of_sexp
 
-    include
-      Binable.Of_stringable_without_uuid [@alert "-legacy"] (struct
+    include Binable.Of_stringable_without_uuid [@alert "-legacy"] (struct
         type nonrec t = t
 
         let to_string = to_string

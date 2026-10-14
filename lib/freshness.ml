@@ -28,7 +28,9 @@ let assess (policy : Policy.t) (basis : Basis.t) ~now =
     | None -> false
     | Some max_age ->
       let today = Time_ns.to_date now ~zone:Time_float.Zone.utc in
-      let date_age = Time_ns.Span.of_day (Float.of_int (Date.diff today basis.rate_date)) in
+      let date_age =
+        Time_ns.Span.of_day (Float.of_int (Date.diff today basis.rate_date))
+      in
       Time_ns.Span.( > ) date_age max_age || Time_ns.Span.( > ) age max_age
   in
   { age; stale = Time_ns.Span.( > ) age policy.stale_after; too_old }
@@ -36,6 +38,8 @@ let assess (policy : Policy.t) (basis : Basis.t) ~now =
 
 let check policy (basis : Basis.t) ~now =
   if (assess policy basis ~now).too_old
-  then Error (Refusal.Rate_too_old { rate_date = basis.rate_date; fetched_at = basis.fetched_at })
+  then
+    Error
+      (Refusal.Rate_too_old { rate_date = basis.rate_date; fetched_at = basis.fetched_at })
   else Ok ()
 ;;
