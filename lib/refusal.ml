@@ -21,6 +21,10 @@ type t =
       }
   | Quote_already_used of string
   | Quote_mismatch of string
+  | Insufficient_funds of
+      { available : Money.Amount.t
+      ; required : Money.Amount.t
+      }
 [@@deriving sexp_of, compare, equal]
 
 let code = function
@@ -35,6 +39,7 @@ let code = function
   | Quote_expired _ -> "quote_expired"
   | Quote_already_used _ -> "quote_already_used"
   | Quote_mismatch _ -> "quote_mismatch"
+  | Insufficient_funds _ -> "insufficient_funds"
 ;;
 
 let to_error t = Error.create_s [%sexp (t : t)]

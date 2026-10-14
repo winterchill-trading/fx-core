@@ -29,11 +29,16 @@ type t =
   | Quote_already_used of string
   | Quote_mismatch of string
   (** the execution request does not match the quote's currencies or amounts *)
+  | Insufficient_funds of
+      { available : Money.Amount.t
+      ; required : Money.Amount.t
+      }
+  (** the paying account's available balance does not cover the sold amount *)
 [@@deriving sexp_of, compare, equal]
 
 (** ["same_currency"], ["no_rate"], ["rate_too_old"], ["amount_not_positive"],
     ["amount_too_small"], ["amount_too_large"], ["currency_mismatch"],
-    ["unknown_quote"], ["quote_expired"], ["quote_already_used"], ["quote_mismatch"]. *)
+    ["unknown_quote"], ["quote_expired"], ["quote_already_used"], ["quote_mismatch"], ["insufficient_funds"]. *)
 val code : t -> string
 
 (** As an [Error.t], for callers that work in [Or_error]. *)
